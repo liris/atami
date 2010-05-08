@@ -1,0 +1,15 @@
+global:
+  max_thread: 32
+  filter.ldrfullfeed.path: fullfeed.json
+filters:
+  - module: subscription.file_source
+    option:
+      subscription.filepath: feed_urls.txt
+  - module: subscription.rss_loader
+    option:
+  - module: filter.ad_filter
+    option:
+  - module: filter.content_fetcher
+    option:
+  - module: publisher.publish_stdout
+    option:

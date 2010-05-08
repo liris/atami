@@ -1,0 +1,12 @@
+================================================
+atami - Abstract Transform Aggregator Interface
+================================================
+
+atami is the gevent-based RSS/Atom feed aggregator/filter written in Python
+
+Requirement
+============
+ - gevent
+ - pyyaml
+
+ - Python 2.6 or lator. Tested only by Python 2.6.
