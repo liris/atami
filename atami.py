@@ -14,14 +14,15 @@ import sys
 import os.path
 import imp
 
-CURRENT_FILE_DIR  = os.path.dirname(__file__)
+CURRENT_FILE_DIR  = os.path.abspath(os.path.dirname(__file__))
 
 
 
 """
 gobal
-  - max_thread : max thread size
- - subscription.filepath: subscription file path
+ - max_thread : max thread size
+ - plugin.path : plugin directory. default is current directory. "."
+   and atami directory is always added as plugin directory.
  - filter.ldrfullfeed.path 
 
 """
@@ -47,9 +48,10 @@ class AtamiEngine:
                     context = f(context)
                     if not context:
                         break
-        
-        jobs = [gevent.spawn(run_filters) for i in range(self.max_thread)]
-        gevent.joinall(jobs)
+        if fetch_list:
+            thread_size = min(len(fetch_list), self.max_thread)
+            jobs = [gevent.spawn(run_filters) for i in range(thread_size)]
+            gevent.joinall(jobs)
         
 
 def load_config(filename):
@@ -67,7 +69,7 @@ def load_filters(global_config, filters):
     
     for  config in filters:
         mod = load_module(config["module"], plugin_path)
-        func = mod.regist_filter(global_config, config["option"])
+        func = mod.regist_filter(global_config, config.get("option"))
         filter_funcs.append(func)
     return filter_funcs
 

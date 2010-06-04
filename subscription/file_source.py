@@ -10,7 +10,7 @@ def regist_filter(global_config, options):
         for line in fp.readlines():
             line = line.strip()
             if line:
-                result.append((str(index), line))
+                result.append((index, line))
                 index += 1
         fp.close()
         return result

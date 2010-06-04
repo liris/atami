@@ -12,8 +12,8 @@ class FileSubscrptionTest(unittest.TestCase):
         fs_reader = fs.regist_filter(None,
                                      {fs.FILEPATH_KEY: "data/test_urls.txt"})
         urls = fs_reader(None)
-        self.assertEquals(urls, [("1", "http://www.google.com/"),
-                                 ("2", "http://www.yahoo.com/")])
+        self.assertEquals(urls, [(1, "http://www.google.com/"),
+                                 (2, "http://www.yahoo.com/")])
     def testLoadFail(self):
         fs_reader = fs.regist_filter(None, {fs.FILEPATH_KEY: "test_no_file.txt"})
         self.assertRaises(IOError, fs_reader, None)

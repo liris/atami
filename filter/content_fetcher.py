@@ -34,9 +34,7 @@ def regist_filter(global_config, options):
         index, feed = context
         jobs = []
         for entry in feed["entries"]:
-            content = entry["content"]
-            if type(content) is types.ListType:
-                content = content[0]
+            content = entry["content"][0]
             if entry.get("full_content"):
                 pass
             elif entry.get(ad_filter.AD_FILTER_KEY) or content["type"] not in FETCH_TYPES:

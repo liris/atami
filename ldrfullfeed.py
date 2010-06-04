@@ -16,7 +16,7 @@ def download(path):
     fp.write(data)
     fp.close()
 
-def load(path):
+def load(path = None):
     if path:
         fp = open(path)
     else:
@@ -36,4 +36,12 @@ def match(data, url):
             return item
     return DEFAULT_XPATH
 
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) == 2:
+        download(sys.argv[1])
+    else:
+        print "download LDRFullFeed json file"
+        print "USAGE: python %s filename_to_donwload" % sys.argv[0]
 
