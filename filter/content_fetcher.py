@@ -41,6 +41,8 @@ def regist_filter(global_config, options):
     data = ldrfullfeed.load(global_config["filter.ldrfullfeed.path"])
     def fetch(context):
         index, feed = context
+        if global_config.get("verbose"):
+            print "fetching content for %d" % index
         jobs = []
         for entry in feed["entries"]:
             content = get_content(entry)
@@ -58,6 +60,9 @@ def regist_filter(global_config, options):
                     entry["default_feed"] = "full_content"
                 jobs.append(gevent.spawn(merge, entry, url, xitem, content["value"]))
         gevent.joinall(jobs)
+        
+        if global_config.get("verbose"):
+            print "fetched content for %d" % index
             
         return context
 
