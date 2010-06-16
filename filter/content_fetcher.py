@@ -28,13 +28,20 @@ def fetch_full(url, encoding, xpath, default_value):
 def merge(entry, url, xitem, default_value):
     entry["full_content"] = fetch_full(url, xitem.get("enc"), xitem["xpath"], default_value)
 
+def get_content(entry):
+    content = entry.get("content")
+    if not content:
+        return {"type": "text/html",
+                "value": ""}
+    return content[0]
+
 def regist_filter(global_config, options):
     data = ldrfullfeed.load(global_config["filter.ldrfullfeed.path"])
     def fetch(context):
         index, feed = context
         jobs = []
         for entry in feed["entries"]:
-            content = entry["content"][0]
+            content = get_content(entry)
             if entry.get("full_content"):
                 pass
             elif entry.get(ad_filter.AD_FILTER_KEY) or content["type"] not in FETCH_TYPES:
