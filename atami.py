@@ -35,6 +35,19 @@ class AtamiEngine:
     def set_filters(self, filters):
         self.filters = filters
 
+    def run_chain(self, filters, context):
+        try:
+            for f in filters:
+                if self.global_config.get("verbose"):
+                    print "filter run %d %s" % (context[0], f)
+                context = f(context)
+                if not context:
+                    if self.global_config.get("verbose"):
+                        print "filter chain finished. %d %s" % (context[0], f)
+                        break
+        except Exception, e:
+            print e
+            
     def run(self):
         if not self.filters:
             return
@@ -44,10 +57,7 @@ class AtamiEngine:
         def run_filters():
             while len(fetch_list):
                 context = fetch_list.pop(0)
-                for f in filters:
-                    context = f(context)
-                    if not context:
-                        break
+                self.run_chain(filters, context)
         if fetch_list:
             thread_size = min(len(fetch_list), self.max_thread)
             jobs = [gevent.spawn(run_filters) for i in range(thread_size)]
