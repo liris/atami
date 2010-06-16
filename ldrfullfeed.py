@@ -7,7 +7,8 @@ import re
 BASE_URL = "http://wedata.net/databases/LDRFullFeed/"
 DEFAULT_XPATH = {
     "enc":"",
-    "xpath": "//body"
+    "xpath": "//body",
+    "default": True
     }
 
 def download(path):

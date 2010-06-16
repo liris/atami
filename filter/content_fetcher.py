@@ -43,6 +43,10 @@ def regist_filter(global_config, options):
             else:
                 url = entry["link"]
                 xitem = ldrfullfeed.match(data, url)
+                if xitem.get("default", False):
+                    entry["default_feed"] = "original"
+                else:
+                    entry["default_feed"] = "full_content"
                 jobs.append(gevent.spawn(merge, entry, url, xitem, content["value"]))
         gevent.joinall(jobs)
             
