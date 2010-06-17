@@ -31,10 +31,11 @@ def merge(entry, url, xitem, default_value):
 def get_content(entry):
     content = entry.get("content")
     if not content:
-        content = {"type": "text/html",
-                   "value": ""}
+        content = {"type": "text/text",
+                   "value": entry.get("summary", "")}
         entry["content"] = [content]
         return content
+    
     return content[0]
 
 def regist_filter(global_config, options):
