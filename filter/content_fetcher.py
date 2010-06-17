@@ -7,26 +7,40 @@ import types
 from lxml import etree, html
 
 FETCH_TYPES = ["text/plain", "text/html"]
-
-def fetch_full(url, encoding, xpath, default_value):
-    if not encoding:
-        encoding = "utf-8"
+"""
+                if xitem.get("default", False):
+                    entry["default_feed"] = "original"
+                else:
+                    entry["default_feed"] = "full_content"
+                xitem.get("enc"), xitem["xpath"]
+"""
+                    
+def fetch_full(url, get_xitem, default_value):
+    default_feed = "original"
     try:
-        data = urllib2.urlopen(url).read().decode(encoding)
+        obj = urllib2.urlopen(url)
+        new_url = obj.url
+        xitem = get_xitem(new_url)
+        if not xitem.get("default", False):
+            default_feed = "full_content"
+        encoding = xitem["enc"]
+        if not encoding:
+            encoding = "utf-8"
+        data = obj.read().decode(encoding)
         root = html.fromstring(data)
-        elems = root.xpath(xpath)
+        elems = root.xpath(xitem["xpath"])
     except:
         elems = None
     
     if not elems:
         return {"value": default_value,
-                "type": "text/plain"}
+                "type": "text/plain"}, default_feed
     else:
         return {"value": etree.tounicode(elems[0]),
-                "type": "text/html"}
+                "type": "text/html"}, default_feed
 
-def merge(entry, url, xitem, default_value):
-    entry["full_content"] = fetch_full(url, xitem.get("enc"), xitem["xpath"], default_value)
+def merge(entry, url, get_xitem, default_value):
+    entry["full_content"], entry["default_feed"] = fetch_full(url, get_xitem, default_value)
 
 def get_content(entry):
     content = entry.get("content")
@@ -54,12 +68,10 @@ def regist_filter(global_config, options):
                                          "value": content["value"]}
             else:
                 url = entry["link"]
-                xitem = ldrfullfeed.match(data, url)
-                if xitem.get("default", False):
-                    entry["default_feed"] = "original"
-                else:
-                    entry["default_feed"] = "full_content"
-                jobs.append(gevent.spawn(merge, entry, url, xitem, content["value"]))
+                def get_xitem(url):
+                    return ldrfullfeed.match(data, url)
+                
+                jobs.append(gevent.spawn(merge, entry, url, get_xitem, content["value"]))
         gevent.joinall(jobs)
         
         if global_config.get("verbose"):

@@ -26,6 +26,9 @@ class FetcherTest(unittest.TestCase):
                 "value": "html value"}],
              "link": "http://blog.liris.org/2010/04/lxml.html"
              },
+            {"summary":"text value",
+             "link": "http://blog.liris.org/2010/04/lxml.html"
+             },
             ]}
         index, result = fetch(("myfeed", data))
         entries = result["entries"]
@@ -33,6 +36,8 @@ class FetcherTest(unittest.TestCase):
                              entries[0]["content"][0]["value"])
         self.assertEquals(entries[1]["full_content"]["value"], "ad filter")
         self.assertNotEquals(entries[2]["full_content"]["value"], "html value")
+        self.assertEquals(entries[3]["full_content"]["value"], "text value")
+        self.assertEquals(entries[3]["content"][0]["value"], "text value")
 
 
 
