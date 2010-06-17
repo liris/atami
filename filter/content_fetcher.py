@@ -17,6 +17,7 @@ FETCH_TYPES = ["text/plain", "text/html"]
                     
 def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
+    new_url = url
     try:
         obj = urllib2.urlopen(url)
         new_url = obj.url
@@ -34,13 +35,14 @@ def fetch_full(url, get_xitem, default_value):
     
     if not elems:
         return {"value": default_value,
-                "type": "text/plain"}, default_feed
+                "type": "text/plain"}, default_feed, url
     else:
         return {"value": etree.tounicode(elems[0]),
-                "type": "text/html"}, default_feed
+                "type": "text/html"}, default_feed, url
 
 def merge(entry, url, get_xitem, default_value):
-    entry["full_content"], entry["default_feed"] = fetch_full(url, get_xitem, default_value)
+    result = fetch_full(url, get_xitem, default_value)
+    entry["full_content"], entry["default_feed"], entry["link"] = result
 
 def get_content(entry):
     content = entry.get("content")
