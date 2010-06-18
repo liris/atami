@@ -6,14 +6,7 @@ import urllib2
 import types
 from lxml import etree, html
 
-FETCH_TYPES = ["text/plain", "text/html"]
-"""
-                if xitem.get("default", False):
-                    entry["default_feed"] = "original"
-                else:
-                    entry["default_feed"] = "full_content"
-                xitem.get("enc"), xitem["xpath"]
-"""
+FETCH_TYPES = ["text/plain", "text/html", "text/text"]
                     
 def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
@@ -35,7 +28,7 @@ def fetch_full(url, get_xitem, default_value):
     
     if not elems:
         return {"value": default_value,
-                "type": "text/plain"}, default_feed, url
+                "type": "text/text"}, default_feed, url
     else:
         return {"value": etree.tounicode(elems[0]),
                 "type": "text/html"}, default_feed, url
@@ -70,8 +63,8 @@ def regist_filter(global_config, options):
                                          "value": content["value"]}
             else:
                 url = entry["link"]
-                def get_xitem(url):
-                    return ldrfullfeed.match(data, url)
+                def get_xitem(fetch_url):
+                    return ldrfullfeed.match(data, fetch_url)
                 
                 jobs.append(gevent.spawn(merge, entry, url, get_xitem, content["value"]))
         gevent.joinall(jobs)
