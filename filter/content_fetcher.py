@@ -21,7 +21,7 @@ def fetch_full(url, get_xitem, default_value):
         encoding = xitem.get("enc")
         if not encoding:
             encoding = "utf-8"
-        data = obj.read().decode(encoding)
+        data = obj.read().decode(encoding, "ignore")
         root = html.fromstring(data)
         elems = root.xpath(xitem["xpath"])
     except Exception, e:
