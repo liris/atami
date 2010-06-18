@@ -18,7 +18,7 @@ def fetch_full(url, get_xitem, default_value):
         xitem = get_xitem(new_url)
         if not xitem.get("default", False):
             default_feed = "full_content"
-        encoding = xitem["enc"]
+        encoding = xitem.get("enc")
         if not encoding:
             encoding = "utf-8"
         data = obj.read().decode(encoding)
@@ -26,6 +26,8 @@ def fetch_full(url, get_xitem, default_value):
         elems = root.xpath(xitem["xpath"])
     except Exception, e:
         print e
+        import stacktrace
+        stacktrace.print_exc()
         try:
             print "ERR: Fetch full feed. xpath(%s) encoding(%s) new_url(%s)" % (xitem["xpath"], encoding, new_url)
         except:
