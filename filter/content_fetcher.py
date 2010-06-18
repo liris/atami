@@ -23,7 +23,9 @@ def fetch_full(url, get_xitem, default_value):
         data = obj.read().decode(encoding)
         root = html.fromstring(data)
         elems = root.xpath(xitem["xpath"])
-    except:
+    except Exception, e:
+        print "ERR: Fetch full feed. xpath(%s) encoding(%s) new_url(%s)" % (xitem["xpath"], encoding, new_url)
+        print e
         elems = None
     
     if not elems:
