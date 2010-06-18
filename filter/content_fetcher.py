@@ -11,6 +11,7 @@ FETCH_TYPES = ["text/plain", "text/html", "text/text"]
 def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
     new_url = url
+    encoding = "utf-8"
     try:
         obj = urllib2.urlopen(url)
         new_url = obj.url
