@@ -26,8 +26,8 @@ def fetch_full(url, get_xitem, default_value):
         elems = root.xpath(xitem["xpath"])
     except Exception, e:
         print e
-        import stacktrace
-        stacktrace.print_exc()
+        import traceback
+        traceback.print_exc()
         try:
             print "ERR: Fetch full feed. xpath(%s) encoding(%s) new_url(%s)" % (xitem["xpath"], encoding, new_url)
         except:
