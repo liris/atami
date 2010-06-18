@@ -28,10 +28,10 @@ def fetch_full(url, get_xitem, default_value):
     
     if not elems:
         return {"value": default_value,
-                "type": "text/text"}, default_feed, url
+                "type": "text/text"}, default_feed, new_url
     else:
         return {"value": etree.tounicode(elems[0]),
-                "type": "text/html"}, default_feed, url
+                "type": "text/html"}, default_feed, new_url
 
 def merge(entry, url, get_xitem, default_value):
     result = fetch_full(url, get_xitem, default_value)
