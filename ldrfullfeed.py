@@ -33,7 +33,7 @@ def _purify(data):
 
 def match(data, url):
     for item in data:
-        if re.match(item["url"], url):
+        if re.search(item["url"], url):
             return item
     return DEFAULT_XPATH
 
