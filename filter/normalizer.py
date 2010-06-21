@@ -32,6 +32,10 @@ def regist_filter(global_config, options):
                 else:
                     entry["content"] = [{"type": "text/html",
                                          "value": ""}]
+            else:
+                content = content_list[0]
+                if content["type"] == "application/xhtml+xml":
+                    content["type"] = "text/html"
                     
             
         return context
