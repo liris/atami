@@ -61,7 +61,8 @@ def regist_filter(global_config, options):
         index, feed = context
         if global_config.get("verbose"):
             print "fetching content for %d" % index
-        jobs = []
+
+        queue = []
         for entry in feed["entries"]:
             content = get_content(entry)
             if entry.get("full_content"):
@@ -73,8 +74,14 @@ def regist_filter(global_config, options):
                 url = entry["link"]
                 def get_xitem(fetch_url):
                     return ldrfullfeed.match(data, fetch_url)
-                
-                jobs.append(gevent.spawn(merge, entry, url, get_xitem, content["value"]))
+                queue.append((entry, url, get_xitem, content["value"]))
+                # jobs.append(gevent.spawn(merge, entry, url, get_xitem, content["value"]))
+        def fetch():
+            while len(queue):
+                item = queue.pop()
+                merge(*item)
+
+        jobs = [gevent.spawn(fetch) for i in range(2)]
         gevent.joinall(jobs)
         
         if global_config.get("verbose"):

@@ -26,7 +26,8 @@ class FetcherTest(unittest.TestCase):
                 "value": "html value"}],
              "link": "http://blog.liris.org/2010/04/lxml.html"
              },
-            {"summary":"text value",
+            {"summary_detail":{"value":"text value",
+                               "type": "text/html"},
              "link": "http://blog.liris.org/2010/04/lxml.html"
              },
             ]}
@@ -36,8 +37,8 @@ class FetcherTest(unittest.TestCase):
                              entries[0]["content"][0]["value"])
         self.assertEquals(entries[1]["full_content"]["value"], "ad filter")
         self.assertNotEquals(entries[2]["full_content"]["value"], "html value")
-        self.assertEquals(entries[3]["full_content"]["value"], "text value")
-        self.assertEquals(entries[3]["content"][0]["value"], "text value")
+        self.assertNotEquals(entries[3]["full_content"]["value"], "text value")
+        self.assertEquals(entries[3]["summary_detail"]["value"], "text value")
 
 
 
