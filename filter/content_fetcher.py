@@ -12,6 +12,7 @@ def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
     new_url = url
     encoding = "utf-8"
+    value = None
     try:
         obj = urllib2.urlopen(url)
         new_url = obj.url
@@ -24,6 +25,7 @@ def fetch_full(url, get_xitem, default_value):
         data = obj.read().decode(encoding, "ignore")
         root = html.fromstring(data)
         elems = root.xpath(xitem["xpath"])
+        value = etree.tounicode(elems[0])
     except Exception, e:
         print e
         import traceback
@@ -32,13 +34,12 @@ def fetch_full(url, get_xitem, default_value):
             print "ERR: Fetch full feed. xpath(%s) encoding(%s) new_url(%s)" % (xitem["xpath"], encoding, new_url)
         except:
             pass
-        elems = None
     
-    if not elems:
+    if not value:
         return {"value": default_value,
                 "type": "text/text"}, default_feed, new_url
     else:
-        return {"value": etree.tounicode(elems[0]),
+        return {"value": value,
                 "type": "text/html"}, default_feed, new_url
 
 def merge(entry, url, get_xitem, default_value):
