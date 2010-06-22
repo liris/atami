@@ -27,7 +27,7 @@ def fetch_full(url, get_xitem, default_value):
         elems = root.xpath(xitem["xpath"])
         value = etree.tounicode(elems[0])
     except Exception, e:
-        print e
+        print "ERR: content_fetcher "　+ str(e)
         import traceback
         traceback.print_exc()
         try:
