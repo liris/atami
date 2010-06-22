@@ -7,7 +7,17 @@ import types
 from lxml import etree, html
 
 FETCH_TYPES = ["text/plain", "text/html", "text/text"]
-                    
+
+def parse_xpath(payload, xpath, encoding):
+    if encoding:
+        data = payload.decode(encoding)
+    else:
+        data = payload
+    root = html.fromstring(data)
+    elems = root.xpath(xpath)
+    value = etree.tounicode(elems[0])
+    return value
+    
 def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
     new_url = url
@@ -22,12 +32,15 @@ def fetch_full(url, get_xitem, default_value):
         encoding = xitem.get("enc")
         if not encoding:
             encoding = "utf-8"
-        data = obj.read().decode(encoding, "ignore")
-        root = html.fromstring(data)
-        elems = root.xpath(xitem["xpath"])
-        value = etree.tounicode(elems[0])
+
+        payload = obj.read()
+        try:
+            value = parse_xpath(payload, xitem["xpath"], encoding)
+        except Exception, e:
+            print "ERR: " + str(e)
+            value = parse_xpath(payload, xitem["xpath"], None)
     except Exception, e:
-        print "ERR: content_fetcher "　+ str(e)
+        print "ERR: content_fetcher " + str(e)
         import traceback
         traceback.print_exc()
         try:
