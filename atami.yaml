@@ -9,6 +9,9 @@ filters:
     option:
   - module: filter.ad_filter
     option:
+      prefix:
+        - AP:
+        - AP：
   - module: filter.content_fetcher
     option:
   - module: publisher.publish_stdout

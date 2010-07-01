@@ -8,15 +8,37 @@ from lxml import etree, html
 
 FETCH_TYPES = ["text/plain", "text/html", "text/text"]
 
-def parse_xpath(payload, xpath, encoding):
+def extract(elem, base_url):
+    elem.base = base_url
+    elem.resolve_base_href()
+    return etree.tounicode(elem)
+
+def extract_value(elems, base_url):
+    v = [extract(e, base_url) for e in elems if isinstance(e, html.HtmlElement)]
+    return u"\r\n".join(v)
+
+def get_by_xpath(root, url, xpath):
+    elems = root.xpath(xpath)
+    if elems:
+        return extract_value(elems, url)
+    else:
+        return None
+        
+        
+def parse_xpath(url, payload, xpath, encoding):
+    default_feed = "original"
     if encoding:
         data = payload.decode(encoding)
     else:
         data = payload
     root = html.fromstring(data)
-    elems = root.xpath(xpath)
-    value = etree.tounicode(elems[0])
-    return value
+    value = get_by_xpath(root, url, xpath)
+    if not value:
+        value = get_by_xpath(root, url, "//body")
+    else:
+        default_feed = "full_content"
+    
+    return value, default_feed
     
 def fetch_full(url, get_xitem, default_value):
     default_feed = "original"
@@ -35,10 +57,10 @@ def fetch_full(url, get_xitem, default_value):
 
         payload = obj.read()
         try:
-            value = parse_xpath(payload, xitem["xpath"], encoding)
+            value, default_feed = parse_xpath(url, payload, xitem["xpath"], encoding)
         except Exception, e:
             print "ERR: " + str(e)
-            value = parse_xpath(payload, xitem["xpath"], None)
+            value, default_feed = parse_xpath(url, payload, xitem["xpath"], None)
     except Exception, e:
         print "ERR: content_fetcher " + str(e)
         import traceback
