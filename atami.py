@@ -19,7 +19,7 @@ CURRENT_FILE_DIR  = os.path.abspath(os.path.dirname(__file__))
 
 
 """
-gobal
+global
  - max_thread : max thread size
  - plugin.path : plugin directory. default is current directory. "."
    and atami directory is always added as plugin directory.
